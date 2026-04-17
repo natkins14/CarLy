@@ -47,7 +47,9 @@
 
 ## 3. System Architecture
 
-Frontend (Next.js) Backend (Python) External APIs (Car Data + AI)
+- Frontend (Next.js) 
+- Backend (Python) 
+- External APIs (Car Data + AI)
 
 ## 4. Technology Stack
 
