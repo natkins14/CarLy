@@ -544,7 +544,7 @@ All AI-generated text must be:
 
 ## 11. Roadmap
 
-### Phase 1 — MVP (Target: 6–8 weeks)
+### Phase 1 — MVP
 - [ ] Cascading vehicle selector (Year → Make → Model → Trim via CarQuery)
 - [ ] Finance + Lease payment calculation engine
 - [ ] Credit tier → interest rate mapping
