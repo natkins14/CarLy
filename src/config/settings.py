@@ -1,117 +1,98 @@
-"""
-config/settings.py — Class-Based Configuration with Type Hints
-
-Pattern: A base Config class holds all shared settings and reads from
-environment variables via python-dotenv. Environment-specific subclasses
-(DevelopmentConfig, ProductionConfig) override only what differs.
-
-The `get_config()` factory is the single entry point used by app.py —
-application code never imports a specific config class directly.
-"""
 from __future__ import annotations
 
 import logging
 import os
+from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 
-# Load .env file from the project root (two levels up from this file: src/config/ → src/ → /)
-_PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent.parent
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_PROJECT_ROOT / ".env")
+
+try:
+    from anthropic import Anthropic
+except ImportError:  # pragma: no cover
+    Anthropic = None  # type: ignore[assignment]
 
 
 class Config:
-    """Base configuration. All values derived from environment variables.
+    APP_NAME = "CarLy"
+    APP_ENV = os.environ.get("APP_ENV", os.environ.get("FLASK_ENV", "development"))
+    DEBUG = os.environ.get("APP_DEBUG", "true").lower() == "true"
+    TESTING = False
 
-    Attributes are typed to document intent and to surface misconfiguration
-    immediately at import time rather than during a live request.
-    """
+    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-in-production")
+    JWT_SECRET = os.environ.get("JWT_SECRET", SECRET_KEY)
+    JWT_ALGORITHM = "HS256"
+    JWT_EXPIRATION_SECONDS = int(os.environ.get("JWT_EXPIRATION_SECONDS", "1800"))
+    SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "carly_session")
 
-    # --- Flask core ---
-    SECRET_KEY: str = os.environ.get("SECRET_KEY", "dev-secret-change-in-production")
-    TESTING: bool = False
-    DEBUG: bool = False
-
-    # --- CarQuery API ---
-    # Overridable so tests can point at a local mock server.
-    CARQUERY_API_URL: str = os.environ.get(
+    CARQUERY_API_URL = os.environ.get(
         "CARQUERY_API_URL",
         "https://www.carqueryapi.com/api/0.3/",
     )
-    CARQUERY_TIMEOUT_SECONDS: int = int(
-        os.environ.get("CARQUERY_TIMEOUT_SECONDS", "3")
-    )
+    CARQUERY_TIMEOUT_SECONDS = int(os.environ.get("CARQUERY_TIMEOUT_SECONDS", "3"))
 
-    # --- File Cache ---
-    # Resolved to an absolute path so the process working directory is irrelevant.
-    CACHE_DIR: Path = Path(
+    CACHE_DIR = Path(
         os.environ.get("CACHE_DIR", str(_PROJECT_ROOT / ".cache" / "carquery"))
     ).resolve()
+    CACHE_FRESH_TTL_SECONDS = 86_400
+    CACHE_STALE_TTL_SECONDS = 172_800
 
-    CACHE_FRESH_TTL_SECONDS: int = 86_400   # 24 hours
-    CACHE_STALE_TTL_SECONDS: int = 172_800  # 48 hours
+    ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+    ANTHROPIC_MODEL = os.environ.get(
+        "ANTHROPIC_MODEL",
+        "claude-3-5-sonnet-latest",
+    )
+    ANTHROPIC_MAX_TOKENS = int(os.environ.get("ANTHROPIC_MAX_TOKENS", "400"))
 
-    # --- Logging ---
-    LOG_LEVEL: int = getattr(
+    LOG_LEVEL = getattr(
         logging,
         os.environ.get("LOG_LEVEL", "INFO").upper(),
         logging.INFO,
     )
 
+    @property
+    def anthropic_enabled(self) -> bool:
+        return bool(self.ANTHROPIC_API_KEY and Anthropic is not None)
+
+    def get_anthropic_client(self) -> Any:
+        if not self.anthropic_enabled:
+            return None
+        return Anthropic(api_key=self.ANTHROPIC_API_KEY)
+
 
 class DevelopmentConfig(Config):
-    """Local development overrides."""
-
-    DEBUG: bool = True
-    LOG_LEVEL: int = logging.DEBUG
+    DEBUG = True
+    LOG_LEVEL = logging.DEBUG
 
 
 class ProductionConfig(Config):
-    """Production hardening overrides."""
-
-    DEBUG: bool = False
-    LOG_LEVEL: int = logging.WARNING
+    DEBUG = False
+    LOG_LEVEL = logging.WARNING
 
     def __init__(self) -> None:
-        # In production, SECRET_KEY must be set explicitly — fail loudly at
-        # startup (not mid-request) if the env var is missing.
-        secret = os.environ.get("SECRET_KEY")
-        if not secret:
-            raise RuntimeError(
-                "SECRET_KEY environment variable is not set. "
-                "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
-            )
-        self.SECRET_KEY = secret
+        if not os.environ.get("JWT_SECRET"):
+            raise RuntimeError("JWT_SECRET environment variable is required in production.")
 
 
 class TestingConfig(Config):
-    """Isolated test configuration.
-
-    Points CarQuery at a local fixture URL and uses a temporary cache directory
-    so tests never hit the live API or pollute the development cache.
-    """
-
-    TESTING: bool = True
-    DEBUG: bool = True
-    LOG_LEVEL: int = logging.DEBUG
-    CARQUERY_API_URL: str = "http://localhost:9999/mock-carquery/"
-    CACHE_DIR: Path = Path("/tmp/carly-test-cache")
+    DEBUG = True
+    TESTING = True
+    LOG_LEVEL = logging.DEBUG
+    CARQUERY_API_URL = "http://localhost:9999/mock-carquery/"
+    CACHE_DIR = (_PROJECT_ROOT / ".cache" / "test-carquery").resolve()
+    JWT_SECRET = "test-secret"
 
 
-_CONFIG_MAP: dict[str, type[Config]] = {
-    "development": DevelopmentConfig,
-    "production": ProductionConfig,
-    "testing": TestingConfig,
-}
-
-
+@lru_cache(maxsize=1)
 def get_config() -> Config:
-    """Return the appropriate Config instance based on FLASK_ENV.
-
-    Defaults to DevelopmentConfig if FLASK_ENV is unset or unrecognised,
-    which is the safe choice for local developer environments.
-    """
-    env: str = os.environ.get("FLASK_ENV", "development").lower()
-    config_class: type[Config] = _CONFIG_MAP.get(env, DevelopmentConfig)
-    return config_class()
+    env = os.environ.get("APP_ENV", os.environ.get("FLASK_ENV", "development")).lower()
+    config_map: dict[str, type[Config]] = {
+        "development": DevelopmentConfig,
+        "production": ProductionConfig,
+        "testing": TestingConfig,
+    }
+    return config_map.get(env, DevelopmentConfig)()
