@@ -7,6 +7,12 @@ __pycache__/
 *.pyo
 .mypy_cache/
 
+# Node.js
+node_modules/
+frontend/node_modules/
+npm-debug.log
+.next/
+
 # CarLy file cache
 .cache/
 
