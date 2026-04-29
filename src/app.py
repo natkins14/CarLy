@@ -6,6 +6,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from auth.session import get_session_claims_from_request
@@ -25,6 +26,15 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     _configure_logging(config.LOG_LEVEL)
     app = FastAPI(title="CarLy", debug=config.DEBUG)
+
+    # ─── CORS Middleware ─────────────────────────────────────────────────────
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:3000", "http://localhost:8000"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     app.state.config = config
     app.state.car_service = CarService(
