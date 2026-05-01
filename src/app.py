@@ -84,6 +84,10 @@ def create_app(config: Config | None = None) -> FastAPI:
                 "action": "none",
             },
         )
+    
+    @app.get("/")
+    def root(): 
+        return {"message": "CarLy API is running."}
 
     app.include_router(cars_router)
     app.include_router(session_router)
