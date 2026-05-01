@@ -52,7 +52,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${dmSans.variable} ${jetbrainsMono.variable}`}
-      style={{ colorScheme: "dark" }}
+      style={{ colorScheme: "light" }}
     >
       <body>
         {/*

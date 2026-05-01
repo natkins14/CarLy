@@ -15,7 +15,6 @@ from exceptions import CarLyBaseException
 from routes.car_routes import cars_router
 from routes.estimate_routes import estimate_router
 from routes.session_routes import session_router
-from services.ai_service import AIExplanationService
 from services.car_service import CarService
 from services.estimation_service import EstimationService
 
@@ -44,10 +43,8 @@ def create_app(config: Config | None = None) -> FastAPI:
         fresh_ttl=config.CACHE_FRESH_TTL_SECONDS,
         stale_ttl=config.CACHE_STALE_TTL_SECONDS,
     )
-    app.state.ai_service = AIExplanationService(config)
     app.state.estimation_service = EstimationService(
         car_service=app.state.car_service,
-        ai_service=app.state.ai_service,
     )
 
     @app.middleware("http")

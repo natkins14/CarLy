@@ -96,7 +96,6 @@ export interface EstimateResponse {
   payment_result: PaymentResult;
   tax_estimate: TaxEstimate;
   user_context: Record<string, unknown>;
-  ai_narrative: string | null;
 }
 
 // ─── Error Envelope ───────────────────────────────────────────────────────────

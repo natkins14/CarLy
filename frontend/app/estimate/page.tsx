@@ -1,10 +1,5 @@
 "use client";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// app/estimate/page.tsx
-// Main estimate page — hosts the 4-step form and renders ResultsPage on success.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState } from "react";
 import EstimateForm from "@/components/EstimateForm";
 import ResultsPage from "@/app/estimate/results/page";
@@ -27,59 +22,22 @@ export default function EstimatePage() {
   }
 
   if (result) {
-    return (
-      <ResultsPage
-        response={result}
-        onNewEstimate={handleNewEstimate}
-        error={error}
-        onRetry={handleNewEstimate}
-      />
-    );
+    return <ResultsPage response={result} onNewEstimate={handleNewEstimate} error={error} onRetry={handleNewEstimate} />;
   }
 
   return (
-    <div
-      style={{
-        maxWidth: 560,
-        margin: "0 auto",
-        padding: "3rem 1rem",
-        fontFamily: "var(--font-sans, 'DM Sans', system-ui, sans-serif)",
-      }}
-    >
+    <div style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1rem", fontFamily: "var(--font-sans, 'DM Sans', system-ui, sans-serif)" }}>
       <header style={{ marginBottom: "2.5rem" }}>
-        <a
-          href="/"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            color: "#4f9cf9",
-            fontSize: "0.875rem",
-            marginBottom: "1.5rem",
-            textDecoration: "none",
-            transition: "opacity 0.15s",
-          }}
-          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = "0.7")}
-          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = "1")}
-        >
+        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#2563eb", fontSize: "0.875rem", marginBottom: "1.5rem", textDecoration: "none" }}>
           <span aria-hidden="true">←</span> CarLy
         </a>
-        <h1
-          style={{
-            fontSize: "clamp(1.5rem, 4vw, 2rem)",
-            fontWeight: 700,
-            letterSpacing: "-0.04em",
-            color: "#f0f2f8",
-            margin: 0,
-          }}
-        >
+        <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", fontWeight: 700, letterSpacing: "-0.04em", color: "#0f172a", margin: 0 }}>
           Estimate your payment
         </h1>
-        <p style={{ fontSize: "0.9375rem", color: "#8b90a8", marginTop: "0.5rem" }}>
+        <p style={{ fontSize: "0.9375rem", color: "#64748b", marginTop: "0.5rem" }}>
           4 quick steps. Nothing stored after your session.
         </p>
       </header>
-
       <EstimateForm onSuccess={handleSuccess} />
     </div>
   );

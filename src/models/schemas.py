@@ -170,12 +170,3 @@ class EstimateResponse(BaseModel):
     payment_result: PaymentResult
     tax_estimate: TaxEstimate
     user_context: dict[str, Any]
-    ai_narrative: str | None = None
-
-
-class ContextPacket(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    vehicle: VehicleRecord
-    payment_result: PaymentResult
-    user_context: dict[str, Any]
