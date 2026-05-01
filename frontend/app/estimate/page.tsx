@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import EstimateForm from "@/components/EstimateForm";
 import ResultsPage from "@/app/estimate/results/page";
 import type { EstimateResponse, ApiError } from "@/types";
@@ -28,9 +29,9 @@ export default function EstimatePage() {
   return (
     <div style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1rem", fontFamily: "var(--font-sans, 'DM Sans', system-ui, sans-serif)" }}>
       <header style={{ marginBottom: "2.5rem" }}>
-        <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#2563eb", fontSize: "0.875rem", marginBottom: "1.5rem", textDecoration: "none" }}>
+        <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#2563eb", fontSize: "0.875rem", marginBottom: "1.5rem", textDecoration: "none" }}>
           <span aria-hidden="true">←</span> CarLy
-        </a>
+        </Link>
         <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", fontWeight: 700, letterSpacing: "-0.04em", color: "#0f172a", margin: 0 }}>
           Estimate your payment
         </h1>
