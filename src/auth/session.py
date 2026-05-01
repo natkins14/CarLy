@@ -56,4 +56,9 @@ def get_session_claims_from_request(request: Request, config: Config) -> Session
     token = request.cookies.get(config.SESSION_COOKIE_NAME) or extract_bearer_token(request)
     if not token:
         return None
-    return decode_session_token(token, config)
+    try:
+        return decode_session_token(token, config)
+    except AuthenticationError:
+        # Expired or invalid token — treat as no session so the middleware
+        # doesn't block public endpoints like /api/session/init.
+        return None

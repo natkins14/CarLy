@@ -162,7 +162,7 @@ export async function fetchVehicles(
   if (params.make) query.set("make", params.make);
   if (params.model) query.set("model", params.model);
 
-  const path = `/cars/${query.toString() ? `?${query}` : ""}`;
+  const path = `/api/cars/${query.toString() ? `?${query}` : ""}`;
 
   const { data, headers } = await apiFetch<VehicleRecord[]>(path, {
     method: "GET",

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from models.schemas import VehicleRecord
 from services.car_service import CarService
 
-cars_router = APIRouter(prefix="/cars", tags=["cars"])
+cars_router = APIRouter(prefix="/api/cars", tags=["cars"])
 
 
 def get_car_service(request: Request) -> CarService:

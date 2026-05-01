@@ -1,196 +1,82 @@
-// app/terms/page.tsx
-// Static Terms of Use page — required by §L3 (click-wrap gate links here).
-// This is a Server Component — no client JavaScript required.
+import Link from "next/link";
 
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Terms of Use — CarLy",
-  robots: { index: false, follow: false },
-};
-
-const Section = ({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) => (
-  <section style={{ marginBottom: "2rem" }}>
-    <h2
-      style={{
-        fontSize: "1.0625rem",
-        fontWeight: 600,
-        letterSpacing: "-0.02em",
-        color: "#e8eaf0",
-        marginBottom: "0.75rem",
-      }}
-    >
-      {title}
-    </h2>
-    {children}
-  </section>
-);
-
-const P = ({ children }: { children: React.ReactNode }) => (
-  <p
-    style={{
-      fontSize: "0.9375rem",
-      color: "#8b90a8",
-      lineHeight: 1.7,
-      marginBottom: "0.75rem",
-    }}
-  >
-    {children}
-  </p>
-);
-
-export default function TermsPage() {
+export default function HomePage() {
   return (
     <div
       style={{
-        maxWidth: "680px",
-        margin: "0 auto",
-        padding: "3rem 1.5rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "80vh",
+        padding: "2rem 1.5rem",
         fontFamily: "var(--font-sans, 'DM Sans', system-ui, sans-serif)",
+        textAlign: "center",
       }}
     >
-      <header style={{ marginBottom: "3rem" }}>
-        <a
-          href="/"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            color: "#4f9cf9",
-            fontSize: "0.875rem",
-            marginBottom: "1.5rem",
-            textDecoration: "none",
-          }}
-        >
-          ← Back to CarLy
-        </a>
-        <h1
-          style={{
-            fontSize: "clamp(1.5rem, 4vw, 2rem)",
-            fontWeight: 700,
-            letterSpacing: "-0.04em",
-            color: "#f0f2f8",
-            marginBottom: "0.5rem",
-          }}
-        >
-          Terms of Use
-        </h1>
-        <p style={{ fontSize: "0.8125rem", color: "#555977" }}>
-          Last updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-        </p>
-      </header>
-
-      <Section title="1. Nature of Estimates">
-        <P>
-          CarLy provides vehicle payment estimates for informational and
-          educational purposes only. All figures — including monthly payments,
-          total costs, interest, lease payments, taxes, and fees — are
-          approximations derived from publicly available data and user-supplied
-          inputs.
-        </P>
-        <P>
-          These estimates are not guarantees, quotes, or commitments of any
-          kind. Actual payments, rates, and terms are determined solely by
-          lenders and dealers.
-        </P>
-      </Section>
-
-      <Section title="2. Not Financial Advice">
-        <P>
-          CarLy is not a licensed financial advisor, mortgage broker, insurance
-          broker, or lender. Nothing on this website constitutes financial,
-          legal, tax, or investment advice. You should consult a qualified
-          professional before making any financial decision.
-        </P>
-      </Section>
-
-      <Section title="3. No Liability">
-        <P>
-          You expressly acknowledge and agree that your use of CarLy is at your
-          sole risk. CarLy and its operators are not liable for any direct,
-          indirect, incidental, or consequential damages arising from your
-          reliance on any estimates or explanations provided by this tool,
-          including decisions to purchase, lease, or finance a vehicle.
-        </P>
-      </Section>
-
-      <Section title="4. Data Handling">
-        <P>
-          CarLy does not store any personal financial data beyond your current
-          browser session. Credit scores are mapped to a credit tier category
-          (e.g., &ldquo;good&rdquo;) and the raw score is immediately discarded.
-          ZIP codes are used only for tax rate estimation within the current
-          request. No data is persisted to a database.
-        </P>
-        <P>
-          Session state is maintained in a short-lived, signed browser cookie
-          that expires after 30 minutes of inactivity. No data from this cookie
-          is linked to your identity.
-        </P>
-      </Section>
-
-      <Section title="5. AI-Generated Content">
-        <P>
-          CarLy uses artificial intelligence to generate plain-language
-          explanations of payment estimates. These explanations are labeled{" "}
-          <strong style={{ color: "#4f9cf9" }}>✦ AI Insights</strong> and are
-          clearly separated from calculated figures. AI-generated text is for
-          informational purposes only and does not constitute financial advice.
-        </P>
-        <P>
-          CarLy implements safeguards to prevent AI-generated explanations from
-          introducing figures that differ from the deterministic calculations.
-          However, you should always verify any figures with your dealer or
-          lender before making a decision.
-        </P>
-      </Section>
-
-      <Section title="6. Third-Party Data">
-        <P>
-          Vehicle data is sourced from third-party providers. CarLy does not
-          guarantee the accuracy, completeness, or timeliness of this data.
-          MSRP figures may be unavailable or may not reflect current market
-          pricing.
-        </P>
-      </Section>
-
-      <Section title="7. Changes to These Terms">
-        <P>
-          CarLy reserves the right to update these Terms of Use at any time.
-          Continued use of the tool after changes constitutes acceptance of the
-          updated terms.
-        </P>
-      </Section>
-
-      <Section title="8. Governing Law">
-        <P>
-          These Terms of Use are governed by the laws of the United States.
-          Any disputes arising from your use of CarLy shall be resolved in
-          accordance with applicable law.
-        </P>
-      </Section>
-
+      {/* Logo mark */}
       <div
         style={{
-          borderTop: "1px solid rgba(255,255,255,0.07)",
-          paddingTop: "1.5rem",
-          marginTop: "0.5rem",
+          width: 52,
+          height: 52,
+          borderRadius: "14px",
+          background: "linear-gradient(135deg, #4f9cf9, #a78bfa)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "24px",
+          fontWeight: 700,
+          color: "#fff",
+          letterSpacing: "-0.5px",
+          marginBottom: "1.25rem",
         }}
       >
-        <p style={{ fontSize: "0.8125rem", color: "#555977" }}>
-          Questions? Contact us at{" "}
-          <a href="mailto:legal@carly.app" style={{ color: "#4f9cf9" }}>
-            legal@carly.app
-          </a>
-          .
-        </p>
+        C
       </div>
+
+      <h1
+        style={{
+          fontSize: "clamp(2rem, 5vw, 3rem)",
+          fontWeight: 700,
+          letterSpacing: "-0.04em",
+          color: "#f0f2f8",
+          margin: "0 0 1rem",
+          lineHeight: 1.1,
+        }}
+      >
+        Estimate your car payment
+      </h1>
+
+      <p
+        style={{
+          fontSize: "1.0625rem",
+          color: "#8b90a8",
+          lineHeight: 1.6,
+          maxWidth: 480,
+          margin: "0 0 2.5rem",
+        }}
+      >
+        Compare finance and lease options in minutes. No account required —
+        nothing stored after your session.
+      </p>
+
+      <Link
+        href="/estimate"
+        style={{
+          display: "inline-block",
+          padding: "0.9rem 2.25rem",
+          borderRadius: "12px",
+          background: "linear-gradient(135deg, #4f9cf9, #a78bfa)",
+          color: "#fff",
+          fontSize: "1rem",
+          fontWeight: 600,
+          letterSpacing: "-0.01em",
+          textDecoration: "none",
+          transition: "opacity 0.15s",
+        }}
+      >
+        Get my estimate →
+      </Link>
     </div>
   );
 }

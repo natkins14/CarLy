@@ -85,6 +85,7 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
   const [loadingTrims, setLoadingTrims] = useState(false);
   const [staleWarning, setStaleWarning] = useState(false);
   const [msrpMissing, setMsrpMissing] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const yearId = useId();
   const makeId = useId();
@@ -96,6 +97,7 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
   useEffect(() => {
     if (!value.year) { setMakes([]); return; }
     setLoadingMakes(true);
+    setFetchError(null);
     setMakes([]);
     setModels([]);
     setTrims([]);
@@ -105,9 +107,10 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
       .then(({ vehicles, cacheZone }) => {
         const uniqueMakes = [...new Set(vehicles.map(v => v.make).filter(Boolean))].sort();
         setMakes(uniqueMakes);
+        if (uniqueMakes.length === 0) setFetchError("No vehicle data found for this year. The vehicle database may be temporarily unavailable.");
         if (cacheZone === "stale") setStaleWarning(true);
       })
-      .catch(() => setMakes([]))
+      .catch(() => setFetchError("Could not load vehicle makes. Check that the backend is running, then try selecting the year again."))
       .finally(() => setLoadingMakes(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value.year]);
@@ -116,6 +119,7 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
   useEffect(() => {
     if (!value.year || !value.make) { setModels([]); return; }
     setLoadingModels(true);
+    setFetchError(null);
     setModels([]);
     setTrims([]);
     onChange({ ...value, model: null, trim: null, msrp: null });
@@ -124,9 +128,10 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
       .then(({ vehicles, cacheZone }) => {
         const uniqueModels = [...new Set(vehicles.map(v => v.model).filter(Boolean))].sort();
         setModels(uniqueModels);
+        if (uniqueModels.length === 0) setFetchError("No models found for this make and year.");
         if (cacheZone === "stale") setStaleWarning(true);
       })
-      .catch(() => setModels([]))
+      .catch(() => setFetchError("Could not load vehicle models. Check that the backend is running, then try again."))
       .finally(() => setLoadingModels(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value.make]);
@@ -135,15 +140,17 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
   useEffect(() => {
     if (!value.year || !value.make || !value.model) { setTrims([]); return; }
     setLoadingTrims(true);
+    setFetchError(null);
     setTrims([]);
     onChange({ ...value, trim: null, msrp: null });
 
     fetchVehicles({ year: value.year, make: value.make, model: value.model })
       .then(({ vehicles, cacheZone }) => {
         setTrims(vehicles);
+        if (vehicles.length === 0) setFetchError("No trims found for this model.");
         if (cacheZone === "stale") setStaleWarning(true);
       })
-      .catch(() => setTrims([]))
+      .catch(() => setFetchError("Could not load vehicle trims. Check that the backend is running, then try again."))
       .finally(() => setLoadingTrims(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value.model]);
@@ -298,6 +305,12 @@ export default function VehicleSelector({ value, onChange, error }: VehicleSelec
             />
           </div>
         </div>
+      )}
+
+      {fetchError && (
+        <p role="alert" aria-live="polite" style={{ fontSize: "0.8125rem", color: "#f87171", background: "rgba(248,113,113,0.08)", borderRadius: "8px", padding: "0.625rem 0.875rem", margin: 0 }}>
+          {fetchError}
+        </p>
       )}
 
       {error && (
