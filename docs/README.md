@@ -1,14 +1,5 @@
 # CarLy — AI-Powered Car Payment Estimator
 
-> **Radical transparency** about what was built, how it was built, and where AI helped — and hurt.
-
-[![CI](https://img.shields.io/github/actions/workflow/status/carly-app/carly/ci.yml?branch=main&label=CI)](../../actions)
-[![Coverage](https://img.shields.io/badge/DCS_coverage-100%25-brightgreen)](docs/TESTING.md)
-[![Security](https://img.shields.io/badge/security-policy-blue)](docs/SECURITY.md)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey)](#)
-
----
-
 ## Table of Contents
 
 1. [Project Identity](#1-project-identity)
@@ -185,6 +176,8 @@ User Input (Step 2)          User Input (Steps 1, 3)
 |-------|----------|--------|---------------|
 | **claude-3-5-sonnet-latest** | Anthropic | Payment narrative generation | Single-turn; max 400 tokens; temp 0.3 |
 | **Claude Sonnet 4.6** | Anthropic (Claude.ai) | SDLC assistance — architecture docs, code generation, test scaffolding, this README | Interactive multi-turn sessions |
+| **GPT 5.4** | OpenAI | Prompt refinement | Drafts fed post-authorship to refine structure, roles, tasks, and objectives to industry standards |
+| **Gemini 3** | Google | Prompt refinement | Drafts fed post-authorship to validate and refine prompt outlines across roles, tasks, and objectives |
 
 **What the production model does not do:**
 
@@ -197,6 +190,23 @@ User Input (Step 2)          User Input (Steps 1, 3)
 - Haiku: Insufficient instruction-following for the numeric constraint (hallucination rate too high in testing).
 - Opus: Cost-prohibitive for per-estimate API calls at scale.
 - Sonnet: Reliable instruction adherence at acceptable cost; the ±400-token output ceiling further constrains risk.
+
+---
+
+### Prompt Refinement Methodology
+
+Every prompt drafted during this project — system prompts, user-facing copy, and SDLC-assistance prompts — followed a two-stage authoring process before being committed:
+
+1. **Draft:** The prompt was written by the developer based on the intended task, role, and constraints.
+2. **Multi-model refinement:** The draft was fed into both **GPT 5.4** (OpenAI) and **Gemini 3** (Google) with the explicit instruction to evaluate and refine it against industry-standard prompt engineering practices. Each model was asked to assess and improve the following axes:
+   - **Role definition** — Is the model's persona and authority scope unambiguous?
+   - **Task clarity** — Is the primary objective stated without room for reinterpretation?
+   - **Objective boundaries** — Are the hard constraints (what the model must not do) explicit and non-negotiable?
+   - **Output specification** — Is the expected format, length, and tone defined?
+
+The refined output from each model was reviewed and reconciled by the developer before adoption. Neither GPT 5.4 nor Gemini 3 is used in the production runtime — their role is confined entirely to the development workflow as prompt quality reviewers.
+
+**Why two models?** GPT 5.4 and Gemini 3 tend to emphasize different failure modes — one surfaces ambiguity in role anchoring, the other flags constraint gaps. Running both and reconciling their feedback produced more robust prompts than either model alone.
 
 ---
 
